@@ -1,6 +1,7 @@
 import { businessDate, endOfBusinessDay, licenceStatus, type StoredLicenceState } from '@boutique/domain';
 import {
   Button,
+  buttonVariants,
   Card,
   CardContent,
   CardDescription,
@@ -18,6 +19,7 @@ import { Link, useParams } from 'react-router';
 import { errorMessage, supabase } from '../../lib/supabase.ts';
 import { LicenceBadge } from '../licence/LicenceBadge.tsx';
 import { formatDate, formatDateTime } from '../licence/labels.ts';
+import { ManagerTabsCard } from './ManagerTabsCard.tsx';
 
 interface Detail {
   name: string;
@@ -233,6 +235,14 @@ export function ConsoleBusinessPage() {
         <p className="text-sm text-muted-foreground">
           {detail.preset} · receipts {detail.prefix}-…
         </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Link
+            to={`/b/${businessId}/settings`}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            Open business settings
+          </Link>
+        </div>
       </div>
 
       {done && <Notice tone="success">{done}</Notice>}
@@ -384,6 +394,8 @@ export function ConsoleBusinessPage() {
           )}
         </CardContent>
       </Card>
+
+      <ManagerTabsCard businessId={businessId} onSaved={() => void load()} />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>

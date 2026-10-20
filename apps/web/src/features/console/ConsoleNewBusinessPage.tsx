@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND_COLOUR } from '@boutique/domain';
 import {
   Button,
   buildBrandPalette,
@@ -91,7 +92,7 @@ export function ConsoleNewBusinessPage() {
   const [preset, setPreset] = useState('');
   const [prefix, setPrefix] = useState('');
   const [prefixEdited, setPrefixEdited] = useState(false);
-  const [colour, setColour] = useState('#3346d3');
+  const [colour, setColour] = useState(DEFAULT_BRAND_COLOUR);
   const [plan, setPlan] = useState('trial');
   const [trial, setTrial] = useState(true);
   const [days, setDays] = useState('14');
@@ -293,7 +294,7 @@ export function ConsoleNewBusinessPage() {
                 <input
                   type="color"
                   aria-label="Pick brand colour"
-                  value={isHexColour(colour) ? colour : '#3346d3'}
+                  value={isHexColour(colour) ? colour : DEFAULT_BRAND_COLOUR}
                   onChange={(e) => setColour(e.target.value)}
                   className="h-10 w-12 shrink-0 cursor-pointer rounded-md border border-input bg-background p-1"
                 />

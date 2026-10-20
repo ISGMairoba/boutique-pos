@@ -6,7 +6,7 @@ A white-label, offline-first point of sale for boutiques, kids' stores, shoe and
 
 ## Status
 
-Phases 0 and 1 of the [build plan](docs/plan.md) are done:
+Phases 0 to 2 of the [build plan](docs/plan.md) are done:
 
 - pnpm workspace with the web app and shared packages; CI runs Biome, type-check, unit tests, build and pgTAP
 - Supabase schema with row-level security; every business is isolated from the others
@@ -16,6 +16,10 @@ Phases 0 and 1 of the [build plan](docs/plan.md) are done:
   that work offline for up to 7 days
 - Owner sign-in with a forced password change after a temporary password; a business page showing the
   licence state and this device's number
+- Business settings: brand (name, colour, logo with an automatic black receipt version), wording, receipt
+  text and layout with a live preview, sales channels, payment methods and features; saved with a version
+  check and history. The platform developer chooses which tabs Managers may change.
+- Device settings (name, paper width, copies, auto-print, auto-lock), changed by Admins and Managers
 
 ## Layout
 
@@ -89,6 +93,17 @@ sent, so this works without custom SMTP.
 
 Both check the caller's sign-in themselves (`verify_jwt = false` in `supabase/config.toml`), because the
 project uses asymmetric JWT signing keys. Deploy with `supabase functions deploy <name>`.
+
+### Settings
+
+Business settings are one JSON document in `business_settings.settings`, read with `parseSettings()` and
+checked with `validateSettings()` (`packages/domain/src/settings.ts`). The server applies the same rules in
+`private.check_business_settings()`; change both together. Saves go through `save_business_settings()` with
+the version the editor loaded, so two people cannot overwrite each other. The app sends back the stored
+document with only the changed parts replaced.
+
+Logos are stored in the public `brand-assets` bucket under `<business id>/`. They appear on receipts, so
+they are public by design; only people allowed to edit the brand can upload.
 
 ### Licence signing key
 

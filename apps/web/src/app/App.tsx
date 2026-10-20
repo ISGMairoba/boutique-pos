@@ -4,11 +4,13 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { ChangePasswordPage } from '../features/auth/ChangePasswordPage.tsx';
 import { SignInPage } from '../features/auth/SignInPage.tsx';
 import { useSession } from '../features/auth/useSession.ts';
+import { BusinessLayout } from '../features/business/BusinessLayout.tsx';
 import { BusinessPage } from '../features/business/BusinessPage.tsx';
 import { ConsoleBusinessesPage } from '../features/console/ConsoleBusinessesPage.tsx';
 import { ConsoleBusinessPage } from '../features/console/ConsoleBusinessPage.tsx';
 import { ConsoleNewBusinessPage } from '../features/console/ConsoleNewBusinessPage.tsx';
 import { HomePage } from '../features/home/HomePage.tsx';
+import { SettingsPage } from '../features/settings/SettingsPage.tsx';
 import { AppShell } from './AppShell.tsx';
 import { usePlatformDeveloper } from './usePlatformDeveloper.ts';
 
@@ -42,7 +44,13 @@ export function App() {
         <AppShell email={session.session.user.email ?? ''} isDeveloper={isDeveloper === true}>
           <Routes>
             <Route path="/" element={<HomePage userId={userId} isDeveloper={isDeveloper === true} />} />
-            <Route path="/b/:businessId" element={<BusinessPage />} />
+            <Route
+              path="/b/:businessId"
+              element={<BusinessLayout userId={userId} isDeveloper={isDeveloper === true} />}
+            >
+              <Route index element={<BusinessPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
             <Route
               path="/console"
               element={

@@ -15,8 +15,9 @@ export interface DeviceLicenceState {
 /**
  * This device's licence for a business. Shows the saved copy at once, then checks in with the
  * server whenever the device is online, so the state is right both offline and after a change.
+ * Pass enabled = false for someone who is not a member (the platform developer looking in).
  */
-export function useDeviceLicence(businessId: string): DeviceLicenceState {
+export function useDeviceLicence(businessId: string, enabled = true): DeviceLicenceState {
   const online = useOnline();
   const [licence, setLicence] = useState<DeviceLicence | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,10 @@ export function useDeviceLicence(businessId: string): DeviceLicenceState {
   // biome-ignore lint/correctness/useExhaustiveDependencies: attempt re-runs the check-in on refresh.
   useEffect(() => {
     let active = true;
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     (async () => {
       const saved = await cachedLicence(businessId).catch(() => null);
@@ -50,7 +55,7 @@ export function useDeviceLicence(businessId: string): DeviceLicenceState {
     return () => {
       active = false;
     };
-  }, [businessId, online, attempt]);
+  }, [businessId, online, attempt, enabled]);
 
   return { licence, loading, error, refresh };
 }
