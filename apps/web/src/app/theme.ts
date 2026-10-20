@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND_COLOUR } from '@boutique/domain';
 import { brandCssVariables, buildBrandPalette } from '@boutique/ui/palette';
 
 export type ThemeChoice = 'system' | 'light' | 'dark';
@@ -60,5 +61,5 @@ export function applyBrand(brandColour: string): void {
 /** Returns to the product's own colours, for screens outside a business such as the console. */
 export function resetBrand(): void {
   document.getElementById('brand-theme')?.remove();
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#3346d3');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', DEFAULT_BRAND_COLOUR);
 }

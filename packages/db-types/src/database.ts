@@ -538,6 +538,10 @@ export type Database = {
         }
         Returns: string
       }
+      console_set_manager_editable: {
+        Args: { p_business: string; p_tabs: string[] }
+        Returns: undefined
+      }
       console_update_licence: {
         Args: {
           p_action: string
@@ -564,6 +568,7 @@ export type Database = {
           valid_until: string
         }[]
       }
+      licence_signing_key: { Args: never; Returns: Json }
       licence_state_at: {
         Args: {
           p_at: string
@@ -576,6 +581,24 @@ export type Database = {
       register_device: {
         Args: { p_business: string; p_device: string; p_name: string }
         Returns: string
+      }
+      save_business_settings: {
+        Args: {
+          p_business: string
+          p_name?: string
+          p_settings: Json
+          p_version: number
+        }
+        Returns: number
+      }
+      save_device_settings: {
+        Args: {
+          p_business: string
+          p_device: string
+          p_name: string
+          p_settings: Json
+        }
+        Returns: undefined
       }
     }
     Enums: {

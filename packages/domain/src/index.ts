@@ -3,3 +3,4 @@ export * from './licence.ts';
 export * from './licence-token.ts';
 export * from './money.ts';
 export * from './ranks.ts';
+export * from './settings.ts';
