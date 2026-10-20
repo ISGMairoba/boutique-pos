@@ -1,0 +1,101 @@
+/*
+ * Theme tokens shared by every screen. Neutral colours live here; the brand colours
+ * (--primary, --primary-foreground, --primary-soft, --ring) are replaced at runtime from the
+ * business's brand settings by applyBrand() in apps/web, using buildBrandPalette().
+ * The app sets data-theme="light" or "dark" on <html> from the device setting or the system.
+ * Keep --background values in step with LIGHT_BACKGROUND and DARK_BACKGROUND in palette.ts.
+ */
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #14161f;
+  --surface: #f6f7fa;
+  --card: #ffffff;
+  --card-foreground: #14161f;
+  --muted: #eef0f4;
+  --muted-foreground: #5b6173;
+  --border: #dfe2ea;
+  --input: #cfd4de;
+  --primary: #3346d3;
+  --primary-foreground: #ffffff;
+  --primary-soft: #e8ebfc;
+  --ring: #3346d3;
+  --success: #1d855a;
+  --success-soft: #e1f4ea;
+  --warning: #a76300;
+  --warning-soft: #fbefd9;
+  --destructive: #c23434;
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #fbe5e5;
+  --radius: 0.625rem;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #111421;
+  --foreground: #e9ebf3;
+  --surface: #161a2b;
+  --card: #181c2e;
+  --card-foreground: #e9ebf3;
+  --muted: #222740;
+  --muted-foreground: #9ca2bb;
+  --border: #2b3150;
+  --input: #3a4163;
+  --primary: #8d9cff;
+  --primary-foreground: #111421;
+  --primary-soft: #232a54;
+  --ring: #8d9cff;
+  --success: #52c58f;
+  --success-soft: #15342a;
+  --warning: #e6a94a;
+  --warning-soft: #3a2b12;
+  --destructive: #f07676;
+  --destructive-foreground: #111421;
+  --destructive-soft: #3d1c22;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}

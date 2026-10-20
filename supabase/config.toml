@@ -1,0 +1,13 @@
+# Supabase CLI settings for the local stack used by CI and local development.
+# The hosted project is linked separately with `supabase link --project-ref qydektyzkobgfucxaroa`.
+project_id = "boutique-pos"
+
+[db]
+port = 54322
+major_version = 17
+
+[db.migrations]
+enabled = true
+
+[db.seed]
+enabled = false
