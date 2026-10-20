@@ -41,6 +41,15 @@ pnpm build
 
 The app reads its backend from `apps/web/.env.development` and `.env.production`. These hold the project URL and the **publishable** key, which are public. Put overrides in `apps/web/.env.local` (git-ignored). Never put a service-role key in a `VITE_` variable.
 
+## Hosting (Vercel)
+
+- Live: https://boutique-pos-kappa.vercel.app (project `boutique-pos`, team isgmairoba).
+- Every push to `main` deploys to production; other branches get preview deployments, which need a Vercel login to view.
+- Project settings: root directory `apps/web`, framework Vite, Node 22, install `pnpm install --no-frozen-lockfile`, build `pnpm run build`, output `dist`.
+- `ENABLE_EXPERIMENTAL_COREPACK=1` makes Vercel use the pnpm version pinned in `package.json`. Without it, Vercel falls back to an old pnpm that fails on Node 22.
+- `apps/web/vercel.json` sends every path to `index.html` so links into the app work.
+- Once `pnpm-lock.yaml` is committed, change the install command back to plain `pnpm install`.
+
 ## Supabase
 
 - Project: `BoutiquePOS` (`qydektyzkobgfucxaroa`, eu-west-1), organization Mairoba Studio.
