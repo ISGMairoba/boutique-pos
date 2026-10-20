@@ -341,6 +341,7 @@ export type Database = {
           plan_id: string
           seq: number
           state: string
+          state_changed_at: string
           updated_at: string
           updated_by: string | null
           valid_until: string
@@ -353,6 +354,7 @@ export type Database = {
           plan_id: string
           seq?: number
           state: string
+          state_changed_at?: string
           updated_at?: string
           updated_by?: string | null
           valid_until: string
@@ -365,6 +367,7 @@ export type Database = {
           plan_id?: string
           seq?: number
           state?: string
+          state_changed_at?: string
           updated_at?: string
           updated_by?: string | null
           valid_until?: string
@@ -483,6 +486,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      am_platform_developer: { Args: never; Returns: boolean }
       business_licence: {
         Args: { p_business: string }
         Returns: {
@@ -494,6 +498,72 @@ export type Database = {
           valid_until: string
         }[]
       }
+      console_businesses: {
+        Args: never
+        Returns: {
+          created_at: string
+          currency: string
+          devices: number
+          grace_ends_at: string
+          id: string
+          last_seen_at: string
+          members: number
+          name: string
+          owner_name: string
+          owner_username: string
+          plan_id: string
+          preset_key: string
+          preset_name: string
+          receipt_prefix: string
+          state: string
+          stored_state: string
+          valid_until: string
+        }[]
+      }
+      console_create_business: {
+        Args: {
+          p_brand_colour?: string
+          p_currency?: string
+          p_days: number
+          p_locale?: string
+          p_name: string
+          p_owner: string
+          p_owner_name: string
+          p_owner_username: string
+          p_plan: string
+          p_preset: string
+          p_receipt_prefix: string
+          p_time_zone?: string
+          p_trial: boolean
+        }
+        Returns: string
+      }
+      console_update_licence: {
+        Args: {
+          p_action: string
+          p_business: string
+          p_plan?: string
+          p_reason?: string
+          p_valid_until?: string
+        }
+        Returns: undefined
+      }
+      console_user_id_by_email: { Args: { p_email: string }; Returns: string }
+      device_check_in: {
+        Args: { p_business: string; p_device: string }
+        Returns: {
+          business_id: string
+          checked_in_at: string
+          device_code: string
+          device_id: string
+          grace_days: number
+          max_offline_days: number
+          plan_id: string
+          state: string
+          state_changed_at: string
+          valid_until: string
+        }[]
+      }
       licence_state_at: {
         Args: {
           p_at: string
@@ -501,6 +571,10 @@ export type Database = {
           p_state: string
           p_valid_until: string
         }
+        Returns: string
+      }
+      register_device: {
+        Args: { p_business: string; p_device: string; p_name: string }
         Returns: string
       }
     }
