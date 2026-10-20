@@ -11,3 +11,10 @@ enabled = true
 
 [db.seed]
 enabled = false
+
+# Both functions check the caller's sign-in themselves (works with asymmetric JWT signing keys).
+[functions.licence-token]
+verify_jwt = false
+
+[functions.console-create-business]
+verify_jwt = false

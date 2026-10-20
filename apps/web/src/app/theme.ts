@@ -56,3 +56,9 @@ export function applyBrand(brandColour: string): void {
   style.textContent = `:root { ${block(brandCssVariables(palette.light))} } [data-theme="dark"] { ${block(brandCssVariables(palette.dark))} }`;
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', palette.light.primary);
 }
+
+/** Returns to the product's own colours, for screens outside a business such as the console. */
+export function resetBrand(): void {
+  document.getElementById('brand-theme')?.remove();
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#3346d3');
+}

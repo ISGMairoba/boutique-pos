@@ -6,23 +6,28 @@ A white-label, offline-first point of sale for boutiques, kids' stores, shoe and
 
 ## Status
 
-Phase 0 (foundations) of the [build plan](docs/plan.md):
+Phases 0 and 1 of the [build plan](docs/plan.md) are done:
 
-- pnpm workspace with the web app and shared packages
-- Supabase project with the baseline schema, row-level security and licence rules
-- Owner sign-in and a home screen listing the account's businesses with their licence state
-- CI: Biome, type-check, unit tests, build, and pgTAP tests on a fresh local database
+- pnpm workspace with the web app and shared packages; CI runs Biome, type-check, unit tests, build and pgTAP
+- Supabase schema with row-level security; every business is isolated from the others
+- Developer console: create a business from a preset with its owner and licence; extend, change plan,
+  make read-only, suspend or restore; every change is recorded
+- Licences enforced on the server (`private.assert_can_write`) and on devices through signed licence tokens
+  that work offline for up to 7 days
+- Owner sign-in with a forced password change after a temporary password; a business page showing the
+  licence state and this device's number
 
 ## Layout
 
 | Path | What it holds |
 | --- | --- |
 | `apps/web` | Vite + React app: routes, screens. Features live under `src/features/<area>`. |
-| `packages/domain` | Business rules as pure TypeScript: money, business dates, licences, ranks. No React, no I/O. |
+| `packages/domain` | Business rules as pure TypeScript: money, business dates, licences and licence tokens, ranks. No React, no I/O. |
 | `packages/ui` | Shared components (shadcn-style), Tailwind theme tokens, and the brand palette builder. |
 | `packages/db-types` | Types generated from the Supabase schema. Do not edit by hand. |
 | `supabase/migrations` | Database changes in filename order. `20261020190000_baseline.sql` builds everything from zero. |
 | `supabase/tests` | pgTAP tests that run in a transaction and roll back. |
+| `supabase/functions` | Edge Functions (Deno). |
 | `docs` | Plan and decisions. |
 
 ## Run it
@@ -67,7 +72,33 @@ insert into private.platform_developers (user_id)
 select id from auth.users where email = 'you@example.com';
 ```
 
-The developer console that uses this role arrives in Phase 1.
+Then sign in to the app: a Console link appears in the header.
+
+### Creating a business
+
+Console → New business. If the owner's email has no account, one is created with a temporary password
+that is shown once; pass it on and the owner chooses their own password at first sign-in. No email is
+sent, so this works without custom SMTP.
+
+### Edge Functions
+
+| Function | What it does |
+| --- | --- |
+| `console-create-business` | Platform developer only. Creates the owner account if needed, then the business. |
+| `licence-token` | Registers the calling device (plan device limit applies) and returns a signed licence token. |
+
+Both check the caller's sign-in themselves (`verify_jwt = false` in `supabase/config.toml`), because the
+project uses asymmetric JWT signing keys. Deploy with `supabase functions deploy <name>`.
+
+### Licence signing key
+
+Licence tokens are signed with an ECDSA P-256 key. The private key lives only in
+`private.licence_signing_keys` (readable by the service role through `public.licence_signing_key()`); it is
+never committed. The public key is `VITE_LICENCE_PUBLIC_KEY` in `apps/web/.env.production`.
+
+To rotate: generate a new key pair, insert it with `active = true` after setting the old row to
+`active = false`, and ship the new public key in the same release. Devices holding a token signed by the
+old key check in again the next time they are online.
 
 ## Reference code
 
