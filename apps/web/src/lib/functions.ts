@@ -18,7 +18,7 @@ async function messageFrom(error: unknown): Promise<string> {
 }
 
 /** Calls an Edge Function as the signed-in user and returns its JSON answer, or throws its message. */
-export async function callFunction<T>(name: string, body: unknown): Promise<T> {
+export async function callFunction<T>(name: string, body: Record<string, unknown>): Promise<T> {
   if (!supabase) throw new Error('This build has no server configured.');
   const { data, error } = await supabase.functions.invoke<T>(name, { body });
   if (error) throw new Error(await messageFrom(error));
