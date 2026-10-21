@@ -131,3 +131,20 @@ test('device settings parse with safe defaults', () => {
   assert.equal(receiptLineWidth(58), 32);
   assert.equal(receiptLineWidth(80), 48);
 });
+
+test('selling settings: cash is found by name until a choice is saved, and limits are checked', () => {
+  const settings = parseSettings(created);
+  assert.deepEqual(settings.selling, { cashMethod: 'Cash', discountLimits: { cashier: 0, admin: 10, manager: 100 } });
+  assert.equal(parseSettings({ ...created, paymentMethods: ['POS', 'Transfer'] }).selling.cashMethod, null);
+  assert.equal(parseSettings({ ...created, selling: { cashMethod: null } }).selling.cashMethod, null);
+  assert.equal(parseSettings({ ...created, selling: { cashMethod: 'Cheque' } }).selling.cashMethod, null);
+  assert.deepEqual(
+    parseSettings({ ...created, selling: { discountLimits: { cashier: 5, admin: 150, manager: 2.5 } } }).selling.discountLimits,
+    { cashier: 5, admin: 10, manager: 100 },
+  );
+
+  settings.selling = { cashMethod: 'Cheque', discountLimits: { cashier: -1, admin: 10, manager: 100 } };
+  const paths = validateSettings(settings, BUSINESS).map((problem) => problem.path);
+  assert.deepEqual(paths, ['selling.cashMethod', 'selling.discountLimits.cashier']);
+  assert.equal(cleanSettings({ ...settings, selling: { ...settings.selling, cashMethod: '  ' } }).selling.cashMethod, null);
+});

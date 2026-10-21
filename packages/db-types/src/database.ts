@@ -630,6 +630,223 @@ export type Database = {
           },
         ]
       }
+      sale_lines: {
+        Row: {
+          barcode: string | null
+          business_id: string
+          cost: number | null
+          discount: number
+          id: string
+          line_no: number
+          list_price: number
+          name: string
+          net: number
+          option_values: string[]
+          product_id: string
+          quantity: number
+          sale_discount_share: number
+          sale_id: string
+          seq: number
+          sku: string | null
+          unit_price: number
+          variant_id: string
+        }
+        Insert: {
+          barcode?: string | null
+          business_id: string
+          cost?: number | null
+          discount: number
+          id: string
+          line_no: number
+          list_price: number
+          name: string
+          net: number
+          option_values?: string[]
+          product_id: string
+          quantity: number
+          sale_discount_share: number
+          sale_id: string
+          seq?: number
+          sku?: string | null
+          unit_price: number
+          variant_id: string
+        }
+        Update: {
+          barcode?: string | null
+          business_id?: string
+          cost?: number | null
+          discount?: number
+          id?: string
+          line_no?: number
+          list_price?: number
+          name?: string
+          net?: number
+          option_values?: string[]
+          product_id?: string
+          quantity?: number
+          sale_discount_share?: number
+          sale_id?: string
+          seq?: number
+          sku?: string | null
+          unit_price?: number
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_lines_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_lines_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_lines_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sale_payments: {
+        Row: {
+          amount: number
+          business_id: string
+          id: string
+          method: string
+          sale_id: string
+          seq: number
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          id: string
+          method: string
+          sale_id: string
+          seq?: number
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          id?: string
+          method?: string
+          sale_id?: string
+          seq?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_payments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_payments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          business_date: string
+          business_id: string
+          cashier_id: string | null
+          cashier_name: string
+          change_given: number
+          channel: string
+          customer_name: string | null
+          customer_phone: string | null
+          device_id: string | null
+          discount: number
+          flags: string[]
+          id: string
+          note: string | null
+          number: number
+          paid: number
+          receipt_no: string
+          recorded_at: string
+          sale_discount: number
+          seq: number
+          sold_at: string
+          subtotal: number
+          total: number
+        }
+        Insert: {
+          business_date: string
+          business_id: string
+          cashier_id?: string | null
+          cashier_name: string
+          change_given: number
+          channel: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          device_id?: string | null
+          discount: number
+          flags?: string[]
+          id: string
+          note?: string | null
+          number: number
+          paid: number
+          receipt_no: string
+          recorded_at?: string
+          sale_discount: number
+          seq?: number
+          sold_at: string
+          subtotal: number
+          total: number
+        }
+        Update: {
+          business_date?: string
+          business_id?: string
+          cashier_id?: string | null
+          cashier_name?: string
+          change_given?: number
+          channel?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          device_id?: string | null
+          discount?: number
+          flags?: string[]
+          id?: string
+          note?: string | null
+          number?: number
+          paid?: number
+          receipt_no?: string
+          recorded_at?: string
+          sale_discount?: number
+          seq?: number
+          sold_at?: string
+          subtotal?: number
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_movements: {
         Row: {
           actor: string | null
@@ -775,6 +992,10 @@ export type Database = {
     }
     Functions: {
       am_platform_developer: { Args: never; Returns: boolean }
+      apply_events: {
+        Args: { p_business: string; p_events: Json }
+        Returns: Json
+      }
       archive_product: {
         Args: { p_archived: boolean; p_business: string; p_product: string }
         Returns: undefined

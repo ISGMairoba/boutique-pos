@@ -31,7 +31,7 @@ export const DEFAULT_TERMS: Record<TermKey, string> = {
 };
 
 /** Settings grouped as they appear on the settings page; Managers may edit only the tabs allowed. */
-export const SETTINGS_TABS = ['brand', 'terminology', 'receipt', 'channels', 'payments'] as const;
+export const SETTINGS_TABS = ['brand', 'terminology', 'receipt', 'channels', 'payments', 'selling'] as const;
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
 
 /** Which stored key each tab owns. features and catalogueSeed belong to the platform developer. */
@@ -41,6 +41,7 @@ export const TAB_KEYS: Record<SettingsTab, keyof BusinessSettings> = {
   receipt: 'receipt',
   channels: 'channels',
   payments: 'paymentMethods',
+  selling: 'selling',
 };
 
 export interface BrandLogo {
@@ -63,9 +64,24 @@ export interface BusinessSettings {
   };
   channels: string[];
   paymentMethods: string[];
+  selling: SellingSettings;
   features: Record<string, boolean>;
   /** Starting categories and option sets from the preset; used when the catalogue is first set up. */
   catalogueSeed: unknown;
+}
+
+/** Ranks that have a discount limit; a business Developer has none. */
+export const DISCOUNT_RANKS = ['cashier', 'admin', 'manager'] as const;
+export type DiscountRank = (typeof DISCOUNT_RANKS)[number];
+
+export interface SellingSettings {
+  /**
+   * The payment method that is cash: only it may be more than the amount due (the difference is
+   * change), and it counts towards the drawer. null when the business takes no cash.
+   */
+  cashMethod: string | null;
+  /** The biggest discount each rank may give, as a whole percentage of the sale before discounts. */
+  discountLimits: Record<DiscountRank, number>;
 }
 
 export const DEFAULT_BRAND_COLOUR: string = '#3346d3';
@@ -95,6 +111,7 @@ export function defaultSettings(): BusinessSettings {
     },
     channels: ['Walk-in'],
     paymentMethods: ['Cash', 'POS', 'Transfer'],
+    selling: { cashMethod: 'Cash', discountLimits: { cashier: 0, admin: 10, manager: 100 } },
     features: {},
     catalogueSeed: null,
   };
@@ -132,6 +149,21 @@ export function parseSettings(stored: unknown): BusinessSettings {
   }
   const channels = strings(stored.channels);
   const paymentMethods = strings(stored.paymentMethods);
+  const methods = paymentMethods.length ? paymentMethods : base.paymentMethods;
+  const selling = isObject(stored.selling) ? stored.selling : {};
+  const limits = isObject(selling.discountLimits) ? selling.discountLimits : {};
+  const discountLimits = { ...base.selling.discountLimits };
+  for (const rank of DISCOUNT_RANKS) {
+    const value = limits[rank];
+    if (Number.isInteger(value) && (value as number) >= 0 && (value as number) <= 100) discountLimits[rank] = value as number;
+  }
+  // Without a saved choice, the method called "Cash" (in any case) is cash.
+  const cashMethod =
+    'cashMethod' in selling
+      ? typeof selling.cashMethod === 'string' && methods.includes(selling.cashMethod)
+        ? selling.cashMethod
+        : null
+      : (methods.find((method) => method.trim().toLowerCase() === 'cash') ?? null);
 
   return {
     brand: {
@@ -150,7 +182,8 @@ export function parseSettings(stored: unknown): BusinessSettings {
       showBarcode: bool(receipt.showBarcode, true),
     },
     channels: channels.length ? channels : base.channels,
-    paymentMethods: paymentMethods.length ? paymentMethods : base.paymentMethods,
+    paymentMethods: methods,
+    selling: { cashMethod, discountLimits },
     features,
     catalogueSeed: stored.catalogueSeed ?? null,
   };
@@ -240,6 +273,17 @@ export function validateSettings(settings: BusinessSettings, businessId: string)
   checkList(problems, 'channels', settings.channels, 'sales channel');
   checkList(problems, 'paymentMethods', settings.paymentMethods, 'payment method');
 
+  const { cashMethod, discountLimits } = settings.selling;
+  if (cashMethod !== null && !settings.paymentMethods.some((method) => method.trim() === cashMethod.trim())) {
+    problems.push({ path: 'selling.cashMethod', message: `"${cashMethod}" is not one of the payment methods.` });
+  }
+  for (const rank of DISCOUNT_RANKS) {
+    const value = discountLimits[rank];
+    if (!Number.isInteger(value) || value < 0 || value > 100) {
+      problems.push({ path: `selling.discountLimits.${rank}`, message: 'Use a whole percentage from 0 to 100.' });
+    }
+  }
+
   for (const [key, value] of Object.entries(settings.features)) {
     if (!/^[a-zA-Z]{1,40}$/.test(key) || typeof value !== 'boolean') {
       problems.push({ path: `features.${key}`, message: 'Features can only be switched on or off.' });
@@ -266,6 +310,7 @@ export function cleanSettings(settings: BusinessSettings): BusinessSettings {
     },
     channels: settings.channels.map((item) => item.trim()).filter(Boolean),
     paymentMethods: settings.paymentMethods.map((item) => item.trim()).filter(Boolean),
+    selling: { ...settings.selling, cashMethod: settings.selling.cashMethod?.trim() || null },
   };
 }
 
