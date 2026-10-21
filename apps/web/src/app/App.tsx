@@ -6,11 +6,15 @@ import { SignInPage } from '../features/auth/SignInPage.tsx';
 import { useSession } from '../features/auth/useSession.ts';
 import { BusinessLayout } from '../features/business/BusinessLayout.tsx';
 import { BusinessPage } from '../features/business/BusinessPage.tsx';
+import { CataloguePage } from '../features/catalogue/CataloguePage.tsx';
+import { ProductEditorPage } from '../features/catalogue/ProductEditorPage.tsx';
 import { ConsoleBusinessesPage } from '../features/console/ConsoleBusinessesPage.tsx';
 import { ConsoleBusinessPage } from '../features/console/ConsoleBusinessPage.tsx';
 import { ConsoleNewBusinessPage } from '../features/console/ConsoleNewBusinessPage.tsx';
 import { HomePage } from '../features/home/HomePage.tsx';
+import { LabelsPage } from '../features/labels/LabelsPage.tsx';
 import { SettingsPage } from '../features/settings/SettingsPage.tsx';
+import { StockPage } from '../features/stock/StockPage.tsx';
 import { AppShell } from './AppShell.tsx';
 import { usePlatformDeveloper } from './usePlatformDeveloper.ts';
 
@@ -49,6 +53,11 @@ export function App() {
               element={<BusinessLayout userId={userId} isDeveloper={isDeveloper === true} />}
             >
               <Route index element={<BusinessPage />} />
+              <Route path="catalogue" element={<CataloguePage />} />
+              <Route path="catalogue/new" element={<ProductEditorPage />} />
+              <Route path="catalogue/:productId" element={<ProductEditorPage />} />
+              <Route path="stock" element={<StockPage />} />
+              <Route path="labels" element={<LabelsPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
             <Route

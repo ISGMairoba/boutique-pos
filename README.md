@@ -6,7 +6,7 @@ A white-label, offline-first point of sale for boutiques, kids' stores, shoe and
 
 ## Status
 
-Phases 0 to 2 of the [build plan](docs/plan.md) are done:
+Phases 0 to 3 of the [build plan](docs/plan.md) are done:
 
 - pnpm workspace with the web app and shared packages; CI runs Biome, type-check, unit tests, build and pgTAP
 - Supabase schema with row-level security; every business is isolated from the others
@@ -20,13 +20,18 @@ Phases 0 to 2 of the [build plan](docs/plan.md) are done:
   text and layout with a live preview, sales channels, payment methods and features; saved with a version
   check and history. The platform developer chooses which tabs Managers may change.
 - Device settings (name, paper width, copies, auto-print, auto-lock), changed by Admins and Managers
+- Catalogue: categories, products with up to three options (size, colour…) and a variant for each
+  combination, each with its own price, cost, barcode, SKU and low-stock level; internal EAN-13 barcodes
+- Stock: receive by size grid (with batch and expiry when batches are on), damage, counts and corrections,
+  each recorded as a stock movement with history; low, out-of-stock and expiring alerts
+- Labels: Code 128 barcode labels on A4 sheets or a label roll, printed from the browser
 
 ## Layout
 
 | Path | What it holds |
 | --- | --- |
 | `apps/web` | Vite + React app: routes, screens. Features live under `src/features/<area>`. |
-| `packages/domain` | Business rules as pure TypeScript: money, business dates, licences and licence tokens, ranks. No React, no I/O. |
+| `packages/domain` | Business rules as pure TypeScript: money, business dates, licences and licence tokens, ranks, settings, catalogue, stock and barcodes. No React, no I/O. |
 | `packages/ui` | Shared components (shadcn-style), Tailwind theme tokens, and the brand palette builder. |
 | `packages/db-types` | Types generated from the Supabase schema. Do not edit by hand. |
 | `supabase/migrations` | Database changes in filename order. `20261020190000_baseline.sql` builds everything from zero. |
