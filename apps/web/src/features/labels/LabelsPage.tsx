@@ -15,7 +15,7 @@ interface Sheet {
   margin: string;
 }
 
-const SHEETS: Record<string, Sheet> = {
+const SHEETS = {
   a4x24: {
     label: 'A4 sheet, 3 × 8 (70 × 37 mm)',
     page: 'A4',
@@ -43,17 +43,18 @@ const SHEETS: Record<string, Sheet> = {
     gap: '0mm',
     margin: '0mm',
   },
-};
+} satisfies Record<string, Sheet>;
+type SheetKey = keyof typeof SHEETS;
 
 export function LabelsPage() {
   const { business } = useBusinessContext();
   const { load } = useCatalogue(business.id);
   const [query, setQuery] = useState('');
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [sheetKey, setSheetKey] = useState('a4x24');
+  const [sheetKey, setSheetKey] = useState<SheetKey>('a4x24');
   const [showPrice, setShowPrice] = useState(true);
   const ids = { search: useId(), sheet: useId() };
-  const sheet = SHEETS[sheetKey] ?? SHEETS.a4x24;
+  const sheet: Sheet = SHEETS[sheetKey];
   const money = (minor: number) =>
     formatMoney(minor, { currency: business.currency, locale: business.locale });
 
@@ -126,7 +127,11 @@ export function LabelsPage() {
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor={ids.sheet}>Label paper</Label>
-                <Select id={ids.sheet} value={sheetKey} onChange={(e) => setSheetKey(e.target.value)}>
+                <Select
+                  id={ids.sheet}
+                  value={sheetKey}
+                  onChange={(e) => setSheetKey(e.target.value as SheetKey)}
+                >
                   {Object.entries(SHEETS).map(([key, s]) => (
                     <option key={key} value={key}>
                       {s.label}
