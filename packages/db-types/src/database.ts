@@ -58,6 +58,57 @@ export type Database = {
           },
         ]
       }
+      batches: {
+        Row: {
+          batch_no: string
+          business_id: string
+          created_at: string
+          expires_on: string | null
+          id: string
+          on_hand: number
+          seq: number
+          updated_at: string
+          variant_id: string
+        }
+        Insert: {
+          batch_no: string
+          business_id: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          on_hand?: number
+          seq?: number
+          updated_at?: string
+          variant_id: string
+        }
+        Update: {
+          batch_no?: string
+          business_id?: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          on_hand?: number
+          seq?: number
+          updated_at?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batches_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "batches_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_settings: {
         Row: {
           business_id: string
@@ -181,6 +232,47 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "presets"
             referencedColumns: ["key"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          archived: boolean
+          business_id: string
+          created_at: string
+          id: string
+          name: string
+          seq: number
+          sort: number
+          updated_at: string
+        }
+        Insert: {
+          archived?: boolean
+          business_id: string
+          created_at?: string
+          id: string
+          name: string
+          seq?: number
+          sort?: number
+          updated_at?: string
+        }
+        Update: {
+          archived?: boolean
+          business_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          seq?: number
+          sort?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -481,12 +573,212 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          archived: boolean
+          business_id: string
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          options: Json
+          seq: number
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          archived?: boolean
+          business_id: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id: string
+          name: string
+          options?: Json
+          seq?: number
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          archived?: boolean
+          business_id?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          options?: Json
+          seq?: number
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          actor: string | null
+          batch_id: string | null
+          business_date: string
+          business_id: string
+          happened_at: string
+          id: string
+          note: string | null
+          on_hand_after: number
+          qty: number
+          reason: string
+          recorded_at: string
+          ref_id: string | null
+          seq: number
+          variant_id: string
+        }
+        Insert: {
+          actor?: string | null
+          batch_id?: string | null
+          business_date: string
+          business_id: string
+          happened_at: string
+          id: string
+          note?: string | null
+          on_hand_after: number
+          qty: number
+          reason: string
+          recorded_at?: string
+          ref_id?: string | null
+          seq?: number
+          variant_id: string
+        }
+        Update: {
+          actor?: string | null
+          batch_id?: string | null
+          business_date?: string
+          business_id?: string
+          happened_at?: string
+          id?: string
+          note?: string | null
+          on_hand_after?: number
+          qty?: number
+          reason?: string
+          recorded_at?: string
+          ref_id?: string | null
+          seq?: number
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      variants: {
+        Row: {
+          archived: boolean
+          barcode: string | null
+          business_id: string
+          cost: number | null
+          created_at: string
+          id: string
+          low_stock_at: number | null
+          on_hand: number
+          option_values: string[]
+          price: number
+          product_id: string
+          seq: number
+          sku: string | null
+          updated_at: string
+        }
+        Insert: {
+          archived?: boolean
+          barcode?: string | null
+          business_id: string
+          cost?: number | null
+          created_at?: string
+          id: string
+          low_stock_at?: number | null
+          on_hand?: number
+          option_values?: string[]
+          price: number
+          product_id: string
+          seq?: number
+          sku?: string | null
+          updated_at?: string
+        }
+        Update: {
+          archived?: boolean
+          barcode?: string | null
+          business_id?: string
+          cost?: number | null
+          created_at?: string
+          id?: string
+          low_stock_at?: number | null
+          on_hand?: number
+          option_values?: string[]
+          price?: number
+          product_id?: string
+          seq?: number
+          sku?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "variants_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       am_platform_developer: { Args: never; Returns: boolean }
+      archive_product: {
+        Args: { p_archived: boolean; p_business: string; p_product: string }
+        Returns: undefined
+      }
       business_licence: {
         Args: { p_business: string }
         Returns: {
@@ -578,6 +870,10 @@ export type Database = {
         }
         Returns: string
       }
+      record_stock: {
+        Args: { p_business: string; p_movements: Json }
+        Returns: Json
+      }
       register_device: {
         Args: { p_business: string; p_device: string; p_name: string }
         Returns: string
@@ -591,6 +887,16 @@ export type Database = {
         }
         Returns: number
       }
+      save_category: {
+        Args: {
+          p_archived?: boolean
+          p_business: string
+          p_id: string
+          p_name: string
+          p_sort?: number
+        }
+        Returns: undefined
+      }
       save_device_settings: {
         Args: {
           p_business: string
@@ -599,6 +905,10 @@ export type Database = {
           p_settings: Json
         }
         Returns: undefined
+      }
+      save_product: {
+        Args: { p_business: string; p_product: Json; p_variants: Json }
+        Returns: number
       }
     }
     Enums: {

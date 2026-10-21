@@ -1,3 +1,4 @@
+import { term } from '@boutique/domain';
 import { Notice } from '@boutique/ui';
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, useOutletContext, useParams } from 'react-router';
@@ -79,6 +80,12 @@ export function BusinessLayout({ userId, isDeveloper }: { userId: string; isDeve
       <nav className="-mt-2 flex flex-wrap gap-1" aria-label="Business">
         <NavLink end to={`/b/${current.id}`} className={tabClass}>
           Overview
+        </NavLink>
+        <NavLink to={`/b/${current.id}/catalogue`} className={tabClass}>
+          {term(current.settings, 'products')}
+        </NavLink>
+        <NavLink to={`/b/${current.id}/stock`} className={tabClass}>
+          Stock
         </NavLink>
         {canOpenSettings && (
           <NavLink to={`/b/${current.id}/settings`} className={tabClass}>
